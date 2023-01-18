@@ -34,9 +34,9 @@ Make sure you EKS cluster created and Kubectl+helm are installed and configure t
     https://aws.amazon.com/getting-started/hands-on/create-mysql-db/
 
 a. Add new policy to security group of mysql
-![snapshot](Pictures/Picture.png)
+![Picture](https://user-images.githubusercontent.com/105212609/213257658-4ce49ee0-c735-4b34-adec-e07cee5bc1a6.png)
 
-b. If mysql is not installed.
+b. If mysql is not installed. <br />
      sudo yum install mysql
 
 c.	Connect to Mysql InstanceRun the mysql server: 
@@ -86,7 +86,7 @@ POJOs are located
 d.	Specify the mirror to recognize the mirror space (This step is already implemented)
 1.  Complete the os-core:mirror -> os-core:source-space
 2.  Use slides from the lesson as a reference. <br />
-e.  Specify the JDBC ULR jdbc:mysql://<RDS-endpoint/>:3306 in BillBuddyPersistency pu.xml. <br />
+e.  Specify the JDBC ULR jdbc:mysql://<"RDS-endpoint">:3306 in BillBuddyPersistency pu.xml. <br />
 
 #### 2.6	Make sure you have a Database ready for use.
 We will using MySQL db instance. <br />
