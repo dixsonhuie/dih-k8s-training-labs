@@ -98,22 +98,26 @@ a.	Make sure you have the MySQL instance up and running (see section 13.1.1 (e) 
 a.	Install Manager <br />
     `helm install manager gigaspaces/xap-manager --version 16.0`
 
-b.	Copy BillBuddy_space and  BillBuddPersistency jar to AWS S3<br />
+b.   Attach tag to manager service
+
+    `kubectl patch svc xap-xap-manager-service -p "{\"metadata\":{\"annotations\":{\"service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags\":\"Owner=twinkal, Project=TF-CSM-LAB-GSTM-379-peristance-vpc, Name=$cluster_name-opsManager-LB\"}}}"`
+
+c.	Copy BillBuddy_space and  BillBuddPersistency jar to AWS S3<br />
   `aws s3 cp --acl public-read-write xap-dev-training-lab17-solution/BillBuddy_Space/target/BillBuddy_Space.jar s3://aa-nihar-test/dih-training/`
     
    `aws s3 cp --acl public-read-write xap-dev-training-lab17-solution/BillBuddPersistency/target/BillBuddPersistency.jar s3://aa-nihar-test/dih-training/`
 
-c.	Deploy BillBuddy_space to the service grid. <br />
+d.	Deploy BillBuddy_space to the service grid. <br />
     `helm install space gigaspaces/xap-pu --version 16.0 --set manager.name=manager,resourceUrl="https://aa-nihar-test.s3.us-east-2.amazonaws.com/dih-training/BillBuddy_Space.jar",partitions=2,ha=true`
 
-d.	Deploy BillBuddPersistency to the service grid (Remember to include BillBuddy model Project. See below) <br />
+e.	Deploy BillBuddPersistency to the service grid (Remember to include BillBuddy model Project. See below) <br />
     `helm install mirror gigaspaces/xap-pu --version 16.0 --set manager.name=manager,resourceUrl="https://aa-nihar-test.s3.us-east-2.amazonaws.com/dih-training/BillBuddyPersistency.jar"`
 
-e.	Validate Mirror service deployed using ops-manager-ui <br />
+f.	Validate Mirror service deployed using ops-manager-ui <br />
 
 ![snapshot](./Pictures/Picture2.png)
 
-f.	See the logs to validate successful deployment.
+g.	See the logs to validate successful deployment.
 Search for the following message in both Space and Mirror deployments:
 
 Expected message in Space Instance log file
@@ -124,7 +128,7 @@ Expected Message in Mirror Instance log file
 
     2023-01-17 10:40:34,276 mirror INFO [com.gigaspaces.replication.channel.in.BillBuddy-space1.primary-backup-reliable-async-mirror-1.mirror-service] - Channel established [source=BillBuddy-space1, source url=BillBuddy-space_container1:BillBuddy-space, source machine connection url=NIO://192.168.85.54:8200/pid[1]/1173144110637205_3_3659695103175983350_details[class com.gigaspaces.internal.cluster.node.impl.router.AbstractConnectionProxyBasedReplicationRouter$ConnectionEndpoint(BillBuddy-space_container1:BillBuddy-space)]]
 
-g. Run BillBuddyAccountFeeder <br />
+h. Run BillBuddyAccountFeeder <br />
                 
  Copy  BillBuddyAccountFeeder.jar to S3
     
@@ -133,7 +137,7 @@ g. Run BillBuddyAccountFeeder <br />
 
     helm install account-feeder gigaspaces/xap-pu --version 16.0 --set manager.name=manager,resourceUrl="https://aa-nihar-test.s3.us-east-2.amazonaws.com/dih-training/BillBuddyAccountFeeder.jar"
 
-h.	Run BillBuddyPaymentFeeder <br />
+i.	Run BillBuddyPaymentFeeder <br />
 
  Copy  BillBuddyPaymentFeeder.jar to S3
 
