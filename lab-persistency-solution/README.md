@@ -33,10 +33,16 @@ Make sure you EKS cluster created and Kubectl+helm are installed and configure t
 
     https://aws.amazon.com/getting-started/hands-on/create-mysql-db/
 
-a.	Connect to Mysql InstanceRun the mysql server: 
+a. Add new policy to security group of mysql
+   ![snapshot](Pictures/Picture.png)
+
+a. If mysql is not installed.
+     sudo yum install mysql
+
+b.	Connect to Mysql InstanceRun the mysql server: 
 
     mysql -u<username> -h<RDS_endpoint> -p  [Enter master user password after hit Enter]     
-b.	Create BillBuddy database:
+c.	Create BillBuddy database:
 
     mysql> create database jbillbuddy;
 
@@ -78,8 +84,9 @@ POJOs are located
 <property name="packagesToScan" value="com.gs.billbuddy.model" />
 2.	Hint: 4 classes only for this demo (but all in same package)
 d.	Specify the mirror to recognize the mirror space (This step is already implemented)
-1.	Complete the os-core:mirror -> os-core:source-space
-2.	Use slides from the lesson as a reference. <br />
+1.  Complete the os-core:mirror -> os-core:source-space
+2.  Use slides from the lesson as a reference. <br />
+e.  Specify the JDBC ULR jdbc:mysql://<RDS-endpoint>:3306 in BillBuddyPersistency pu.xml. <br />
 
 #### 2.6	Make sure you have a Database ready for use.
 We will using MySQL db instance. <br />
@@ -110,7 +117,7 @@ f.	See the logs to validate successful deployment.
 Search for the following message in both Space and Mirror deployments:
 
 Expected message in Space Instance log file
-
+snapshot
     2023-01-17 10:40:34,295 space INFO [com.gigaspaces.replication.channel.out.BillBuddy-space1.primary-backup-reliable-async-mirror-1.mirror-service] - Channel state changed from CONNECTED to ACTIVE [target=mirror-service, target url=jini://*/mirror-service_container/mirror-service?total_members=2,1&cluster_schema=partitioned&mirror=true&id=1&schema=default&locators=manager-xap-manager-0.manager-xap-manager-hs.default.svc.cluster.local&groups=xap-16.0.0&state=started&timeout=5000, target machine connection url=NIO://192.168.43.133:8200/pid[1]/1173160686666662_3_-5253373900594734578_details[class com.gigaspaces.internal.cluster.node.impl.router.AbstractConnectionProxyBasedReplicationRouter$ConnectionEndpoint(mirror-service_container:mirror-service)]] 
 
 Expected Message in Mirror Instance log file
