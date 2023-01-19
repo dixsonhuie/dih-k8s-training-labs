@@ -14,7 +14,7 @@ Setup Lens on a Windows machine to connect to DIH EKS cluster
 > * Owner=owner,
 > * Name=name
 > * profile=prod
-> * or any policy other policy
+> * or any other policy
 3. Get the password for the Administrator user.
 4. Connect to the Windows machine using RDP
 
