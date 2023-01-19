@@ -107,17 +107,6 @@ NOTE: Use the same image tag that was build in step #2 in butbucket-pipelines.ym
 3. Add only "smart-dih-demo" project to bit bucket repo location (root level) and move bitbucket-pipelines.yml from smart-dih-demo/ to root level
 4. Push this new project to Bitbucket repo
 
-/*
-5. Change the remote reference in our local Git repo to the new Bitbucket endpoint
-    ```
-   git remote set-url origin <BitBucket repo address>
-   ```
-6. Do a git push to push all branches up to the remote on Bitbucket
-   ```
-   git push --all
-   ```
-*/
-
 -------------
 ## 6. Test Pipeline Execution Flow
 
