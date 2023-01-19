@@ -103,18 +103,27 @@ NOTE: Use the same image tag that was build in step #2 in butbucket-pipelines.ym
 ## 5. Do Initial Push to Repository on Bitbucket
 
 1. First, create new a repo on Bitbucket and take note of the URL (or SSH endpoint) of the new repo.
+2. Clone it to local system
+3. Add only "smart-dih-demo" project to bit bucket repo location (root level) and move bitbucket-pipelines.yml from smart-dih-demo/ to root level
+4. Push this new project to Bitbucket repo
 
-2. Change the remote reference in our local Git repo to the new Bitbucket endpoint
+/*
+5. Change the remote reference in our local Git repo to the new Bitbucket endpoint
     ```
    git remote set-url origin <BitBucket repo address>
    ```
-3. Do a git push to push all branches up to the remote on Bitbucket
+6. Do a git push to push all branches up to the remote on Bitbucket
    ```
    git push --all
    ```
+*/
 
 -------------
 ## 6. Test Pipeline Execution Flow
+
+**Go to Bitbucket Dashboard -> Repository -> Pipeline <br/>
+**Run Initial Pipeline
+![snapshot](Pictures/Picture8.png)
 
 1. Edit “totalRecords” and “startId” in MyBean.java file available at smart-dih-demo/src/main/java/com/mycompany/app/MyBean.java
 2. Push code changes to the Bitbucket repository
