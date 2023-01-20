@@ -15,5 +15,7 @@ pipelines:
           - helm repo add gigaspaces https://resources.gigaspaces.com/helm-charts
           - helm repo update
           - helm upgrade -i manager gigaspaces/xap-manager --version 16.0
+          #- kubectl patch svc manager-xap-manager-service -p "{\"metadata\":{\"annotations\":{\"service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags\":\"Owner=nihar, Project=dih-lab, Name=$cluster_name-opsManager-LB\"}}}
           - helm upgrade -i demo gigaspaces/xap-pu --version 16.0 --set manager.name=manager,partitions=2
-          - helm upgrade -i feeder gigaspaces/xap-pu --version 16.0 --set manager.name=manager,resourceUrl="https://aa-nihar-test.s3.us-east-2.amazonaws.com/Bitbucket-demo/smart-dih-demo-1.0-SNAPSHOT.jar"
+          - helm uninstall feeder || true
+          - helm install feeder gigaspaces/xap-pu --version 16.0 --set manager.name=manager,resourceUrl="https://aa-nihar-test.s3.us-east-2.amazonaws.com/Bitbucket-demo/smart-dih-demo-1.0-SNAPSHOT.jar"

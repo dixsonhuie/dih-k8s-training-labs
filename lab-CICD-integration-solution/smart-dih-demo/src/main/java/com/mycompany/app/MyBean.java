@@ -39,7 +39,7 @@ public class MyBean {
         for(long i=startId;i<(startId+ totalRecords);i++){
             logger.info("Writing Emp in spaces"+i);
             e = new Employee();
-            e.setPid("Pid-"+i);
+            e.setId("Pid-"+i);
             e.setFirstName("FirstName-"+i);
             e.setLastName("LastName-"+i);
             e.setDepartment("Department-"+i);
