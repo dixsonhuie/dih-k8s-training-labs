@@ -35,6 +35,7 @@ kubectl apply -f pu-service.yaml
 Modify the host value in ingress.yaml
 check the external-ip given by load nginx service
 
+```
 [centos@ip-172-31-24-138 scratch]$ kubectl get service
 NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP                                                               PORT(S)
 demospace-hs              ClusterIP      None             <none>                                                                    <none>
@@ -51,6 +52,7 @@ xap-grafana               ClusterIP      172.20.76.186    <none>                
 xap-influxdb              ClusterIP      172.20.221.35    <none>                                                                    8086/TCP,8088/TCP
 xap-xap-manager-hs        ClusterIP      None             <none>                                                                    2181/TCP,2888/TCP,3888/TCP,4174/TCP
 xap-xap-manager-service   LoadBalancer   172.20.63.145    adf2d83acb7bd439093da78d3650c903-434495312.eu-west-1.elb.amazonaws.com    8090:31309/TCP,4174:32628/TCP,8200:31208/TCP
+```
 
 kubectl apply -f ingress.yaml
 
