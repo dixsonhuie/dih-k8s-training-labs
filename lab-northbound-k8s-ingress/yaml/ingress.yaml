@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: example-ingress
+  namespace: default
+  annotations:
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: a5e6192ef60594ebd86a0c9e395ad40a-1744496120.eu-west-1.elb.amazonaws.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: pu-service
+                port:
+                  number: 8091
