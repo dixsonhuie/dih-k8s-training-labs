@@ -24,7 +24,7 @@ curl -X POST localhost:8080/insert?tableName=Persons -H  'Content-type:applicati
 curl -v localhost:8080/queryrs?tableName=Persons
 
 2. Change for k8s environment
-2.1 Change application_k8s properties to reflect paramters in your k8s enviorments
+2.1 Change application_k8s properties to reflect paramters in your k8s enviorments <br>
 2.2 Rename application.properties to application_sg.properties & application_k8s.properties to application.properties
 2.3 Run in terminal : mvn clean install
 2.3 Build image: (create user in docker hub if you don't have one)
