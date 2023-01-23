@@ -11,7 +11,7 @@ Use the slides from the lesson as a reference.
 ## 1 Lab setup
 Make sure you EKS cluster created and Kubectl+helm are installed and configure to connect to Eks
 
-##1.Test rest api application on local enviorment
+### Test rest api application on local enviorment
 1. start a demo in your local desktop - (gs-home/bin/gs.sh demo)
 2. In IDE terminal run: mvn clean spring-boot:run
 3. Open another terminal run the following:
@@ -24,7 +24,7 @@ curl -X POST localhost:8080/insert?tableName=Persons -H  'Content-type:applicati
 7. Run in terminal
 curl -v localhost:8080/queryrs?tableName=Persons
 
-##2. Change for k8s environment
+### Change for k8s environment
 1. connect to jumpper
 2. run: ./install-dih-umbrella.sh
 3. apply annotations changes so loadbulancers are not stopped
@@ -33,7 +33,7 @@ curl -v localhost:8080/queryrs?tableName=Persons
 5. Rename application.properties to application_sg.properties & application_k8s.properties to application.properties
 6. Run in terminal : mvn clean install
 
-##3 build & push image
+###  Build & push image
 see: https://docs.docker.com/docker-hub/repos/#:~:text=To%20push%20an%20image%20to,docs%2Fbase%3Atesting%20
 1. create a user in dockerhub
 2. see DockerFile in the project and press open in terminal
@@ -42,15 +42,20 @@ see: https://docs.docker.com/docker-hub/repos/#:~:text=To%20push%20an%20image%20
 4. docker  login
 5. docker push <your-hub-user>/<repo-name>[:<tag>]
    (e.g : docker push myrest:1.0.1)
-6. edit mydeployment.yaml change image to the image you built
-7. copy yaml files to your jumpper
-7. in jumpper : kubectl apply -f mydeployment.yaml
-8. validate a new pod was created
-9. in jumpper : kubectl apply -f myservice.yaml
-10. in jumpper : kubectl get services
-11. see external ip for my-rest-api service
-12. repeat first exercise replacing local host with the service host
-[Instead of using loadbalncer as type of service you can change to cluserIP and use ingress as expaline in northbound lab]
+
+### Prepare and deploy service & deployment yamls 
+1. edit mydeployment.yaml change image to the image you built
+2. copy yaml files to your jumpper
+3. in jumpper : kubectl apply -f mydeployment.yaml
+4. validate a new pod was created
+5. in jumpper : kubectl apply -f myservice.yaml
+
+### Run curl against the k8s service
+1. in jumpper run: kubectl get services 
+2. see external ip for your service (my-rest-api service)
+3. repeat first exercise replacing local host with the service host
+
+note: Instead of using loadbalncer as type of service you can change to cluserIP and use ingress as explained in northbound lab]
 
 
    
