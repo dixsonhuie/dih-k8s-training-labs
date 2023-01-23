@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-rest-api
+  labels:
+    app: my-rest-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: my-rest-api
+  template:
+    metadata:
+      labels:
+        app: my-rest-api
+    spec:
+      containers:
+        - name: my-rest-api
+          image: atzd1/mytest1:1.01
+          ports:
+            - containerPort: 8080
