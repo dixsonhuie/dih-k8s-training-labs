@@ -14,7 +14,7 @@ Make sure you EKS cluster created and Kubectl+helm are installed and configure t
 ### Test rest api application on local enviorment
 1. start a demo in your local desktop - (gs-home/bin/gs.sh demo)
 2. In IDE terminal run: mvn clean spring-boot:run
-3. Open another terminal run the following:
+3. Open another terminal run the following: or use http://localhost:8080/swagger-ui.html
 curl -X POST localhost:8080/newtable -H 'Content-type:application/txt' -d 'CREATE TABLE Persons (ID int NOT NULL,LastName varchar(255) NOT NULL,FirstName varchar(255),Age int,PRIMARY KEY (ID))'
 4. Go to ops-manger (localhost:8090) see type Persons was created
 5. Run in terminal
