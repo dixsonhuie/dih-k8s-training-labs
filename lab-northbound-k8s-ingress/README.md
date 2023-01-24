@@ -1,40 +1,135 @@
+# lab-northbound-k8s-ingress
 
+## Lab Goals
 
-Run the ./install-dih-umbrella.sh only
+Demonstrate how to deploy a GigaSpaces service and expose it through a Kubernetes Ingress
 
-cd dih-k8s-training-labs/lab-northbound-k8s-ingress/restexample
+## 1 Lab setup
+1. Install [Maven](https://maven.apache.org/install.html).
 
-mvn package
+##### Note - Maven
 
-# Need to host jars somewhere... how should this be done?
+Maven versions &gt; 3.8 won't connect to non-https repos by default. Below is a workaround.
 
-Install ingress controller
-helm install
+In ~/.m2/settings.xml, (if it doesn't exist, copy it from &lt;maven install directory&gt;/conf/settings.xml)
+
+Add:
+```xml
+<mirror>
+  <id>maven-default-http-blocker</id>
+  <mirrorOf>external:http:*</mirrorOf>
+  <name>Pseudo repository to mirror external repositories intially using HTTP.</name>
+  <url>http://maven-repository.openspaces.org</url>
+</mirror>
+```
+(There is already a section mirror. Modify the url and and comment out or remove blocked=true)
+
+2. Refer to the [OOTB-DIH-k8s-provisioning](https://github.com/GigaSpaces-ProfessionalServices/OOTB-DIH-k8s-provisioning) for k8s cluster setup instructions.
+
+3. Run the `./install-dih-umbrella.sh` only. This will create the GigaSpaces Manager and the Operator.
+
+## 2 Package artifacts
+
+1. Assuming this lab folder has already been downloaded, `cd dih-k8s-training-labs/lab-northbound-k8s-ingress/restexample` and run `mvn package`:
+
+```
+~/dih-k8s-training-labs/lab-northbound-k8s-ingress/restexample$ mvn package
+
+...
+[INFO] ------------------------------------------------------------------------
+[INFO] Reactor Summary for restexample 1.0-SNAPSHOT:
+[INFO] 
+[INFO] restexample ........................................ SUCCESS [  0.002 s]
+[INFO] restservice ........................................ SUCCESS [  1.333 s]
+[INFO] space .............................................. SUCCESS [  0.692 s]
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  2.115 s
+[INFO] Finished at: 2023-01-23T13:36:26-05:00
+[INFO] ------------------------------------------------------------------------
+```
+
+## 3 Host artifacts
+
+For the purpose of this lab, I have created a folder `gstm376-dixson` in an existing s3 bucket and uploaded the jar files to it. For lab purposes, the jars are publicly accessible. There are two artifacts needed:
+
+```
+dih-k8s-training-labs/lab-northbound-k8s-ingress/restexample/space/target/demo-pu.jar
+dih-k8s-training-labs/lab-northbound-k8s-ingress/restexample/restservice/target/restservice.war
+```
+
+## 4 Install ingress controller
+
+Assuming helm is already installed,
+
+1. Add the helm repo
+```
 helm repo add nginx-stable https://helm.nginx.com/stable
-
+```
+2. Refresh the repo to get the latest updates
+```
 helm repo update
-
+```
+3. Install the ingress controller
+```
 helm install my-nginx nginx-stable/nginx-ingress --set rbac.create=true
+```
 
-Immediately after the install run:
-kubectl patch svc my-nginx-nginx-ingress -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags":"Owner=owner,Project=gstm376,Name=ingress"}}}'
+**Important** - Immediately after the ingress controller is installed run:
 
-Install space
+```
+# Replace attendee with your first name and run the below command.  
+kubectl patch svc my-nginx-nginx-ingress -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags":"Owner=attendee,Project=gstm376-attendee,Name=ingress"}}}'
 
-# remember to host jar
-helm install demospace gigaspaces/xap-pu --version 16.2.1 --set manager.name=xap --set schema=partitioned,partitions=1,resourceUrl=https://github.com/dixsonhuie/mirrorexample2/blob/master/pu.basic.jar?raw=true,properties=space.name=demo
+# To verify these values have been applied
+kubectl describe svc my-nginx-nginx-ingress
 
-Install web PU
-# remember to host jar
-helm install rest gigaspaces/xap-pu --version 16.2.1 --set manager.name=xap --set instances=1,resourceUrl=https://github.com/dixsonhuie/mirrorexample2/blob/master/restserver.war?raw=true,properties=web.port=8091,metrics.enabled=false,livenessProbe.enabled=false,readinessProbe.enabled=false
+# Or
+kubectl get all
+# Verify the pods and the service
+```
 
-# expose the service
+This is needed to help manage resources and to work with our internal audit policies.
+
+## Install space
+
+```
+helm install demo gigaspaces/xap-pu --version 16.2.1 --set manager.name=xap --set schema=partitioned,partitions=1,resourceUrl=https://csm-training.s3.eu-west-1.amazonaws.com/gstm376-dixson/demo-pu.jar,properties=space.name=demo
+
+# To verify run: kubectl get pods; kubectl get service; kubectl get statefulset; kubectl get pus
+
+# Or run: kubectl get all
+# then run
+$ kubectl get pus
+kubectl get pus
+NAME   STATUS
+demo   DEPLOYED
+```
+
+## Install web PU
+In this step we will deploy a web Processing Unit which is a rest service that can access the space
+
+```
+helm install rest gigaspaces/xap-pu --version 16.2.1 --set manager.name=xap --set instances=1,resourceUrl=https://csm-training.s3.eu-west-1.amazonaws.com/gstm376-dixson/restservice.war,properties=web.port=8091,metrics.enabled=false,livenessProbe.enabled=false,readinessProbe.enabled=false
+helm install rest201   gigaspaces/xap-pu --version 16.2.1 --set manager.name=xap --set instances=1,resourceUrl=https://csm-training.s3.eu-west-1.amazonaws.com/gstm376-dixson/restservice.jar,properties=web.port=8091,metrics.enabled=false,livenessProbe.enabled=false,readinessProbe.enabled=false
+# To verify run: kubectl get pods; kubectl get service; kubectl get statefulset; kubectl get pus
+
+```
+
+## Expose the service
+
+In the `dih-k8s-training-labs/lab-northbound-k8s-ingress/yaml` directory there is a yaml `pu-service.yaml`. Change to this directory and run:
+
+```
 kubectl apply -f pu-service.yaml
+```
 
-#
-Modify the host value in ingress.yaml
-check the external-ip given by load nginx service
+## Define and deploy the ingress resource
 
+1. Modify the host value in ingress.yaml
+
+ * Check the external-ip given by load nginx service
 ```
 [centos@ip-172-31-24-138 scratch]$ kubectl get service
 NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP                                                               PORT(S)
@@ -53,13 +148,15 @@ xap-influxdb              ClusterIP      172.20.221.35    <none>                
 xap-xap-manager-hs        ClusterIP      None             <none>                                                                    2181/TCP,2888/TCP,3888/TCP,4174/TCP
 xap-xap-manager-service   LoadBalancer   172.20.63.145    adf2d83acb7bd439093da78d3650c903-434495312.eu-west-1.elb.amazonaws.com    8090:31309/TCP,4174:32628/TCP,8200:31208/TCP
 ```
+ * In the ingress.yaml, modify the host value with the External-IP that was assigned during the Ingress Controller deployment
 
+2. Deploy the ingress
+```
 kubectl apply -f ingress.yaml
+```
 
+## Verify
 
 http://<host name provisioned by eks>/rest <- Hello World!
 http://<host name provisioned by eks>/rest/rest/restful-example <- Shows the count of objects in the demo space.
-
-
-
 
