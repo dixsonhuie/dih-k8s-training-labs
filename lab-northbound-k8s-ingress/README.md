@@ -205,7 +205,7 @@ http://<host name provisioned by eks>/rest/rest/restful-example <- Shows the cou
 
 ![browser screenshot](Pictures/restexample.png)
 
-## Teardown
+## 10 Teardown
 ```
 kubectl delete ingress example-ingress
 kubectl delete service pu-service
