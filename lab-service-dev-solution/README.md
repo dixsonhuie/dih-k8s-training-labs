@@ -55,6 +55,10 @@ see: https://docs.docker.com/docker-hub/repos/#:~:text=To%20push%20an%20image%20
 1. in jumpper run: kubectl get services 
 2. see external ip for your service (my-rest-api service)
 3. repeat first exercise replacing local host with the service host
+   
+### Remove the deploy service and space
+1. In jumper: kubectl delete service my-rest-api ( kubectl delete service <service-name>)
+2. open ops-ui -> demo -> undeply service
 
 note: Instead of using loadbalncer as type of service you can change to cluserIP and use ingress as explained in northbound lab]
 
