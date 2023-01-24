@@ -23,6 +23,7 @@
     <modules>
         <module>restservice</module>
         <module>space</module>
+        <module>dist</module>
     </modules>
     <dependencies>
         <dependency>
