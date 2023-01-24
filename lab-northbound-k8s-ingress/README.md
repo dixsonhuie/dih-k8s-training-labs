@@ -7,7 +7,7 @@ Demonstrate how to deploy a GigaSpaces service and expose it through a Kubernete
 ## Lab Description
 This lab contains the following steps which may be broken down into additional steps.
 
- * K8s cluster already spun up 
+ * K8s cluster set up 
  * Deploy ingress controller
  * Deploy services 
  * Apply ingress yaml
@@ -204,3 +204,12 @@ http://<host name provisioned by eks>/rest/rest/restful-example <- Shows the cou
 ```
 
 ![browser screenshot](Pictures/restexample.png)
+
+## Teardown
+```
+kubectl delete ingress example-ingress
+kubectl delete service pu-service
+helm delete rest demo my-nginx
+
+cd ~/OOTB-DIH-provisioning/scripts; ./uninstall-dih-umbrella.sh
+```
