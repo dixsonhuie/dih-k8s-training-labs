@@ -27,7 +27,6 @@ curl -v localhost:8080/queryrs?tableName=Persons
 ### Change for k8s environment
 1. connect to jumpper
 2. run: ./install-dih-umbrella.sh
-3. apply annotations changes so loadbulancers are not stopped
 3. open ops-ui -> deploy space with name demo
 4. Change application_k8s properties to reflect parameters in your k8s enviorments 
 5. Rename application.properties to application_sg.properties & application_k8s.properties to application.properties
@@ -49,6 +48,8 @@ see: https://docs.docker.com/docker-hub/repos/#:~:text=To%20push%20an%20image%20
 3. in jumpper : kubectl apply -f mydeployment.yaml
 4. validate a new pod was created
 5. in jumpper : kubectl apply -f myservice.yaml
+6. add annotations to keep loadbalancer of the service up
+   in jumpper run: kubectl patch svc my-rest-api -p '{"metadata":{"annotations":{"service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags":"Owner=owner,Project=gstm385,Name=my-rest-api"}}}'
 
 ### Run curl against the k8s service
 1. in jumpper run: kubectl get services 
