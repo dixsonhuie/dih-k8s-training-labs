@@ -9,13 +9,13 @@ pipelines:
         script:
           - cd smart-dih-demo
           - mvn clean package -DskipTests
-          - aws configure set aws_access_key_id $AWS_ACCESS_KEY --profile default && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default && aws configure set region "us-east-2" --profile default && aws configure set output "json" --profile default
-          - aws s3 cp --acl public-read-write target/smart-dih-demo-1.0-SNAPSHOT.jar s3://aa-nihar-test/Bitbucket-demo/
-          - aws eks update-kubeconfig --region us-east-2 --name dih-lab
+          - aws configure set aws_access_key_id $AWS_ACCESS_KEY --profile default && aws configure set aws_secret_access_key $AWS_SECRET_ACCESS_KEY --profile default && aws configure set region "eu-west-1" --profile default && aws configure set output "json" --profile default
+          - aws s3 cp --acl public-read-write target/smart-dih-demo-1.0-SNAPSHOT.jar s3://csm-training/GSTM386/
+          - aws eks update-kubeconfig --region eu-west-1 --name dih-lab
           - helm repo add gigaspaces https://resources.gigaspaces.com/helm-charts
           - helm repo update
           - helm upgrade -i manager gigaspaces/xap-manager --version 16.0
           #- kubectl patch svc manager-xap-manager-service -p "{\"metadata\":{\"annotations\":{\"service.beta.kubernetes.io/aws-load-balancer-additional-resource-tags\":\"Owner=nihar, Project=dih-lab, Name=$cluster_name-opsManager-LB\"}}}
           - helm upgrade -i demo gigaspaces/xap-pu --version 16.0 --set manager.name=manager,partitions=2
           - helm uninstall feeder || true
-          - helm install feeder gigaspaces/xap-pu --version 16.0 --set manager.name=manager,resourceUrl="https://aa-nihar-test.s3.us-east-2.amazonaws.com/Bitbucket-demo/smart-dih-demo-1.0-SNAPSHOT.jar"
+          - helm install feeder gigaspaces/xap-pu --version 16.0 --set manager.name=manager,resourceUrl="https://csm-training.s3.eu-west-1.amazonaws.com/GSTM386/smart-dih-demo-1.0-SNAPSHOT.jar"

@@ -44,11 +44,6 @@ Learn how to create CI/CD pipeline to automate space and data-feeder service dep
 14. Run the command ./run.sh
 15. cd OOTB-DIH-k8s-provisioning
 16. Run: ./initGS-Lab.sh and follow the instructions
-17. Verify EKS Cluster
-
-``` 
-eksctl get cluster
-```
 
 --------------
 
