@@ -8,7 +8,7 @@ Learn how to create CI/CD pipeline to automate space and data-feeder service dep
 
 ## Tasks:
 
-1. Create EKS Cluster
+1. Create EC2 Jumper & EKS Cluster
 2. Create Custom Docker Image
 
    a. Image must have tools: Awscli, Kubectl, Helm, Maven
