@@ -32,10 +32,12 @@ wget https://github.com/GigaSpaces-ProfessionalServices/dih-k8s-training-labs/ar
 # unzip
 unzip main.zip
 ```
-2. `cd ~/dih-k8s-training-labs/lab-northbound-k8s-ingress` and run `mvn package`:
+2. `cd ~/dih-k8s-training-labs-main/lab-northbound-k8s-ingress`. We will refer to this $LAB_DIR for the rest of this lab.
+
+Run `mvn package`:
 
 ```
-~/dih-k8s-training-labs/lab-northbound-k8s-ingress$ mvn package
+~/dih-k8s-training-labs-main/lab-northbound-k8s-ingress$ mvn package
 
 ...
 [INFO] ------------------------------------------------------------------------
@@ -160,7 +162,7 @@ kubectl logs xap-operator-54c7d9785-7975k
 
 ## 9 Expose the service
 
-In the `dih-k8s-training-labs/lab-northbound-k8s-ingress/yaml` directory there is a yaml `pu-service.yaml`. Change to this directory and run:
+In the `$LAB_DIR/yaml` directory there is a yaml file `pu-service.yaml`. Change to this directory and run:
 
 ```
 kubectl apply -f pu-service.yaml
