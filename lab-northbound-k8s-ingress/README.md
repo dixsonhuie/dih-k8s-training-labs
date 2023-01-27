@@ -15,32 +15,24 @@ This lab contains the following steps which may be broken down into additional s
 
 
 ## 1 Lab setup
-1. Install [Maven](https://maven.apache.org/install.html).
 
-##### Note - Maven
+1. Refer to the [OOTB-DIH-k8s-provisioning](https://github.com/GigaSpaces-ProfessionalServices/OOTB-DIH-k8s-provisioning) for k8s cluster setup instructions.
 
-Maven versions &gt; 3.8 won't connect to non-https repos by default. Below is a workaround.
-
-In ~/.m2/settings.xml, (if it doesn't exist, copy it from &lt;maven install directory&gt;/conf/settings.xml)
-
-Add:
-```xml
-<mirror>
-  <id>maven-default-http-blocker</id>
-  <mirrorOf>external:http:*</mirrorOf>
-  <name>Pseudo repository to mirror external repositories intially using HTTP.</name>
-  <url>http://maven-repository.openspaces.org</url>
-</mirror>
-```
-(There is already a section mirror. Modify the url and and comment out or remove blocked=true)
-
-2. Refer to the [OOTB-DIH-k8s-provisioning](https://github.com/GigaSpaces-ProfessionalServices/OOTB-DIH-k8s-provisioning) for k8s cluster setup instructions.
+2. If you intend to run the Maven portions of this lab on your own computer, please see Maven installation steps at the end of the lab. Otherwise, the jumper has Maven pre-installed.
 
 3. Run the `./install-dih-umbrella.sh` only. This will create the GigaSpaces Manager and the Operator.
 
 ## 2 Package artifacts
 
-1. Assuming this lab folder has already been downloaded, `cd dih-k8s-training-labs/lab-northbound-k8s-ingress` and run `mvn package`:
+1. If you haven't done so already, download the labs from the github repository.
+```
+cd ~
+wget https://github.com/GigaSpaces-ProfessionalServices/dih-k8s-training-labs/archive/refs/heads/main.zip
+
+# unzip
+unzip main.zip
+```
+2. `cd ~/dih-k8s-training-labs/lab-northbound-k8s-ingress` and run `mvn package`:
 
 ```
 ~/dih-k8s-training-labs/lab-northbound-k8s-ingress$ mvn package
@@ -63,11 +55,19 @@ Add:
 
 ## 3 Host artifacts
 
-For the purpose of this lab, I have created a folder `gstm376-dixson` in an existing s3 bucket and uploaded the jar files to it. For lab purposes, the jars are publicly accessible. There are two artifacts needed:
+For the purpose of this lab, I have created a folder `gstm376-dixson` in an existing s3 bucket and uploaded the jar files to it. For lab purposes, the jars are publicly accessible. There are 3 artifacts needed:
 
+space/target/demo-pu.jar
+
+feeder/target/feeder-pu.jar
+
+dist/target/restservice.jar
+
+Modify the below commands to save the artifacts to your own separate sub-folder.
 ```
-dih-k8s-training-labs/lab-northbound-k8s-ingress/space/target/demo-pu.jar
-dih-k8s-training-labs/lab-northbound-k8s-ingress/dist/target/restservice.jar
+aws s3 cp --acl public-read-write  space/target/demo-pu.jar     s3://csm-training/<gstm376-your-name>/
+aws s3 cp --acl public-read-write feeder/target/feeder-pu.jar   s3://csm-training/<gstm376-your-name>/
+aws s3 cp --acl public-read-write   dist/target/restservice.jar s3://csm-training/<gstm376-your-name>/
 ```
 
 ## 4 Install ingress controller
@@ -95,14 +95,18 @@ kubectl patch svc my-nginx-nginx-ingress -p '{"metadata":{"annotations":{"servic
 
 # To verify these values have been applied
 kubectl describe svc my-nginx-nginx-ingress
+```
+This is needed to help manage resources and to work with our internal audit policies.
 
-# To verify nginx helm installation run: kubectl get pods; kubectl get service; kubectl get deployment; kubectl get replicaset
+To verify nginx helm installation run:
+```
+kubectl get pods; kubectl get service; kubectl get deployment; kubectl get replicaset
 # Or run:
 kubectl get all
 
 ```
 
-This is needed to help manage resources and to work with our internal audit policies.
+
 
 ## 5 Install space
 
@@ -110,7 +114,12 @@ This is needed to help manage resources and to work with our internal audit poli
 helm install demo gigaspaces/xap-pu --version 16.2.1 --set manager.name=xap --set schema=partitioned,partitions=1,resourceUrl=https://csm-training.s3.eu-west-1.amazonaws.com/gstm376-dixson/demo-pu.jar,properties=space.name=demo
 ```
 
-## 6 Install web PU
+## 6 Install feeder
+The feeder will write some objects to the space.
+```
+helm install feeder gigaspaces/xap-pu --version 16.2.1 --set manager.name=xap --set instances=1,resourceUrl=https://csm-training.s3.eu-west-1.amazonaws.com/gstm376-dixson/feeder-pu.jar,properties=space.name=demo
+```
+## 7 Install web PU
 In this step we will deploy a web Processing Unit which is a rest service that can access the space.
 
 ```
@@ -118,7 +127,7 @@ In this step we will deploy a web Processing Unit which is a rest service that c
 helm install rest gigaspaces/xap-pu --version 16.2.1 --set manager.name=xap --set instances=1,resourceUrl=https://csm-training.s3.eu-west-1.amazonaws.com/gstm376-dixson/restservice.jar,properties=web.port=8091,metrics.enabled=false,livenessProbe.enabled=false,readinessProbe.enabled=false
 ```
 
-## 7 Verification
+## 8 Verification
 
 1. Below are basic verification to confirm the helm deployments worked.
 ```
@@ -149,7 +158,7 @@ kubectl logs <pod/xap-operator-name>
 kubectl logs xap-operator-54c7d9785-7975k
 ```
 
-## 8 Expose the service
+## 9 Expose the service
 
 In the `dih-k8s-training-labs/lab-northbound-k8s-ingress/yaml` directory there is a yaml `pu-service.yaml`. Change to this directory and run:
 
@@ -157,16 +166,18 @@ In the `dih-k8s-training-labs/lab-northbound-k8s-ingress/yaml` directory there i
 kubectl apply -f pu-service.yaml
 ```
 
-## 8 Define and deploy the ingress resource
+## 10 Define and deploy the ingress resource
 
 1. Modify the host value in ingress.yaml
 
- * Check the external-ip given by load nginx service
+ * Check the external-ip given by nginx LoadBalancer service
 ```
 [centos@ip-172-31-24-138 ~]$ kubectl get service
 NAME                      TYPE           CLUSTER-IP       EXTERNAL-IP                                                               PORT(S)
 demospace-hs              ClusterIP      None             <none>                                                                    <none>
 demospace-xap-pu-hs       ClusterIP      None             <none>                                                                    <none>
+feeder-hs                 ClusterIP      None             <none>                                                                    <none>
+feeder-xap-pu-hs          ClusterIP      None             <none>                                                                    <none>
 grafana-lb                LoadBalancer   172.20.198.233   a0f9fa770bb624545aac601897cae40a-920489994.eu-west-1.elb.amazonaws.com    3000:30974/TCP
 kubernetes                ClusterIP      172.20.0.1       <none>                                                                    443/TCP
 manager-loadbalancer      LoadBalancer   172.20.145.53    a3757173d66a949ba9cab9f1fde02e14-1745997678.eu-west-1.elb.amazonaws.com   8200:31232/TCP,4174:31448/TCP,8090:32388/TCP
@@ -193,10 +204,9 @@ NAME              CLASS   HOSTS                                                 
 example-ingress   nginx   a5e6192ef60594ebd86a0c9e395ad40a-1744496120.eu-west-1.elb.amazonaws.com   a5e6192ef60594ebd86a0c9e395ad40a-1744496120.eu-west-1.elb.amazonaws.com   80   
 ```
 
-## 9 Verify
+## 11 Verify
 
 In a web browser go to the EXTERNAL-IP that is exposed in the ingress controller (and also specified in the ingress.yaml).
-
 
 ```
 http://<host name provisioned by eks>/rest <- Hello World!
@@ -213,3 +223,27 @@ helm delete rest demo my-nginx
 
 cd ~/OOTB-DIH-provisioning/scripts; ./uninstall-dih-umbrella.sh
 ```
+
+## End of Lab
+
+#### Maven installion
+Below are Maven installation instructions if you intend to compile the labs on your own computer.
+
+1. Install [Maven](https://maven.apache.org/install.html).
+
+##### Note - Maven
+
+Maven versions &gt; 3.8 won't connect to non-https repos by default. Below is a workaround.
+
+In ~/.m2/settings.xml, (if it doesn't exist, copy it from &lt;maven install directory&gt;/conf/settings.xml)
+
+Add:
+```xml
+<mirror>
+  <id>maven-default-http-blocker</id>
+  <mirrorOf>external:http:*</mirrorOf>
+  <name>Pseudo repository to mirror external repositories intially using HTTP.</name>
+  <url>http://maven-repository.openspaces.org</url>
+</mirror>
+```
+(There is already a section mirror. Modify the url and and comment out or remove blocked=true)

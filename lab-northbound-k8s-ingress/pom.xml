@@ -24,6 +24,8 @@
         <module>restservice</module>
         <module>space</module>
         <module>dist</module>
+        <module>feeder</module>
+        <module>common</module>
     </modules>
     <dependencies>
         <dependency>
