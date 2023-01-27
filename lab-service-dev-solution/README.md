@@ -22,6 +22,8 @@ The jumper box will have the ability to connect to EKS.
 3. `curl` should be installed.
 4. Intellij Community Edition is recommended, but not required.
 
+###### For preparation of the Docker image
+1. Install [Docker](https://docs.docker.com/engine/install/)
 
 ## Test the REST API application on a local environment
 It's useful to test locally first to ensure everything is running smoothly before deployment onto k8s.
