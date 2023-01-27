@@ -75,14 +75,19 @@ Learn how to create CI/CD pipeline to automate space and data-feeder service dep
 
 ![snapshot](Pictures/Picture1.png)
 
+3. Make sure 2 factor sign in is done from personal settings & pipeline is enabled from repository settings
+    
 3. Set Repository Variables (same aws credential from Jumper ec2 instance)
-    ```
+    
+   ```
    Set AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY to access your AWS environment
    ```
     ![snapshot](Pictures/Picture2.png)
 
 --------------
 ## 4. Configure bitbucket-pipelines.yml
+
+1. If image tag is updated in step #2 then change this file (else this step can be skipped), below is details of steps mentioned in pipeline. 
 
 1. Use bitbucket-pipelines.yml available at <Project_Root>/smart-dih-demo/
 
@@ -109,7 +114,7 @@ Learn how to create CI/CD pipeline to automate space and data-feeder service dep
 
 1. First, create new a repo on Bitbucket and take note of the URL (or SSH endpoint) of the new repo.
 
-2. Clone it to local system
+2. Clone this newly created repository to jumper machine.
 
 3. Add only "smart-dih-demo" project to bit bucket repo location (root level) and move bitbucket-pipelines.yml from smart-dih-demo/ to root level also copy pom.xml file present at root level to root of the repo. 
 
