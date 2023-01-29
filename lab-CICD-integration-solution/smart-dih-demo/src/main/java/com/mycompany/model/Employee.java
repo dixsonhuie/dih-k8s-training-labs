@@ -7,7 +7,7 @@ import com.gigaspaces.annotation.pojo.SpaceId;
 public class Employee {
     private String firstName;
     public String lastName;
-    public Long id;
+    public String id;
     public String department;
     double salary;
     public Employee() {}
@@ -29,11 +29,11 @@ public class Employee {
     }
 
     @SpaceId
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(String pid) {
+    public void setId(String id) {
         this.id = id;
     }
 

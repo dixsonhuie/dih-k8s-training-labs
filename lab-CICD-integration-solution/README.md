@@ -8,7 +8,7 @@ Learn how to create CI/CD pipeline to automate space and data-feeder service dep
 
 ## Tasks:
 
-1. Create EKS Cluster
+1. Create EC2 Jumper & EKS Cluster
 2. Create Custom Docker Image
 
    a. Image must have tools: Awscli, Kubectl, Helm, Maven
@@ -26,37 +26,41 @@ Learn how to create CI/CD pipeline to automate space and data-feeder service dep
 
 ----------------
 
-## 1. Create EKS Cluster
+## 1. Create EC2 Jumper & EKS Cluster
 
-1. Install AWSCLI </br> https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
-2. Install Eksctl </br> https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html
-3. Configure AWS
-    ``` 
-    aws configure
-    ```
-
-4. Create EKS Cluster
-    ``` 
-    eksctl create cluster --name smart-dih-lab --version 1.21 --region --nodegroup-name standard-workers --node-type <ec2_instance_type> --nodes <total_nodes_count> --nodes-min 1 --nodes-max <total_nodes_count> --tags <tags_by_comma_separated>
-    ```
-5. Verify EKS Cluster
-    ``` 
-    eksctl get cluster
-    ```
+1. Login to AWS console
+2. Select Ireland region (eu-west-1)
+3. Select EC2
+4. Move to Instances page
+5. On the top right corner click on the orange button (press the down arrow)
+6. Click on 'Launch instance from template'
+7. In Choose a launch template - search for 'CSM-LAB-EKS-JUMPER-template' (lt ID: lt-079d823907147c80b)
+8. Scroll down to 'Resource tags' and modify the 'Name' tag. It's high recommended to concatenate your name (i.e: CSM-LAB-Jumper-James)
+9. Click on 'Launch instance' orange button.
+10. You should see a note like 'Successfully initiated launch of instance (i-xxxxxxxxxx)', click the link to move to ec2 instance page
+11. Wait a few minutes for the instance to be available, locate your instance public ip.
+12. Use OOTB-DIH-Provisioning.pem, make sure to grant this file the right permmisions (chmod 400 OOTB-DIH-Provisioning.pem) the pem file will be provided separately.
+13. Connect to your jumper machine via: ssh -i "OOTB-DIH-Provisioning.pem" centos@Your-Public-IP
+14. Run the command ./run.sh
+15. cd OOTB-DIH-k8s-provisioning
+16. Run: ./initGS-Lab.sh and follow the instructions
 
 --------------
 
 ## 2.Create Custom Docker Image
 
-1. Create Dockerfile with tools installation steps
+1. This step is optional as we have built image pushed to hub. If you create you own image then please update same image name in bitbucket-pipelines.yml
+
+2. Create Dockerfile with tools installation steps
+
    1. AWSCLI
    2. Kubectl
    3. Helm
    4. Maven
 
-2. Use Dockerfile from <PROJECT_ROOT>/docker/Dockerfile 
+3. Use Dockerfile from <PROJECT_ROOT>/docker/Dockerfile 
 
-3. Build and push docker
+4. Build and push docker (make sure you have necessary permissions to push image)
    ```
     docker build -t smart-dih-demo/pipelines-kubectl:latest . --no-cache
     docker push smart-dih-demo/pipelines-kubectl:latest
@@ -71,23 +75,29 @@ Learn how to create CI/CD pipeline to automate space and data-feeder service dep
 
 ![snapshot](Pictures/Picture1.png)
 
-3. Set Repository Variables
-    ```
+3. Make sure 2 factor sign in is done from personal settings & pipeline is enabled from repository settings
+    
+3. Set Repository Variables (same aws credential from Jumper ec2 instance)
+    
+   ```
    Set AWS_ACCESS_KEY and AWS_SECRET_ACCESS_KEY to access your AWS environment
    ```
-![snapshot](Pictures/Picture2.png)
+    ![snapshot](Pictures/Picture2.png)
 
 --------------
 ## 4. Configure bitbucket-pipelines.yml
 
-1. Use butbucket-pipelines.yml available at <Project_Root>/smart-dih-demo/
+1. If image tag is updated in step #2 then change this file (else this step can be skipped), below is details of steps mentioned in pipeline. 
+
+1. Use bitbucket-pipelines.yml available at <Project_Root>/smart-dih-demo/
 
    **It has following sections:**
+
    ```
     “Image:” - You can specify a custom docker image from Docker Hub as your build environment
     “Step:” - deployment steps will be executed for each pipeline run
     “Script:” - Shell commands you need to perform when pipeline triggers
-    ```
+   ```
 
    **Pipeline Steps Explained:**
     ```
@@ -97,15 +107,22 @@ Learn how to create CI/CD pipeline to automate space and data-feeder service dep
     4. Add Gigaspaces repo to Helm
     5. Install Manager, Space and Data-feeder using Helm
     ```
-NOTE: Use the same image tag that was build in step #2 in butbucket-pipelines.yml  
+   NOTE: Use the same image tag that was build in step #2 in butbucket-pipelines.yml  
 
 -----------------
 ## 5. Do Initial Push to Repository on Bitbucket
 
 1. First, create new a repo on Bitbucket and take note of the URL (or SSH endpoint) of the new repo.
-2. Clone it to local system
-3. Add only "smart-dih-demo" project to bit bucket repo location (root level) and move bitbucket-pipelines.yml from smart-dih-demo/ to root level
-4. Push this new project to Bitbucket repo
+
+2. Clone this newly created repository to jumper machine.
+
+3. Add only "smart-dih-demo" project to bit bucket repo location (root level) and move bitbucket-pipelines.yml from smart-dih-demo/ to root level also copy pom.xml file present at root level to root of the repo. 
+
+4. Use the same name, and aws region in the bitbucket-pipelines.yml file as used during cluster creation using eksctl.
+
+    aws eks update-kubeconfig **--region us-east-2** **--name dih-lab** (build will fails if not set correctly)
+
+5. Push this new project to Bitbucket repo
 
 -------------
 ## 6. Test Pipeline Execution Flow
