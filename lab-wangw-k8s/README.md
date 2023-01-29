@@ -46,6 +46,7 @@
         - --configmap=$(POD_NAMESPACE)/ingress-nginx-controller
         - --validating-webhook=:8443
         - --validating-webhook-certificate=/usr/local/certificates/cert
+        - --tcp-services-configmap=$(POD_NAMESPACE)/tcp-services
     ```
     Press Esc, and type:
     ```
