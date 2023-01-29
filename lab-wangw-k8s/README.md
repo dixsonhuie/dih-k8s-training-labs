@@ -14,7 +14,7 @@
 
 1. connect to Jumper
    ```
-   ssh -i OOTB-DIH-Provisioning.pem centos@3.248.214.83
+   ssh -i OOTB-DIH-Provisioning.pem centos@52.48.122.119
    ```
 2. Prepare the WEST side
    ```
