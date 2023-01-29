@@ -1,5 +1,7 @@
 ## GSTM-378 WAN Gateway for k8s - Live DEMO
 
+### This Demo does not include GUI for grafana and k8s dashboard. 
+
 ### Prerequisites
 1. EKS cluster in region eu-west-1 is installed
 2. EKS cluster in region eu-central-1 is installed
