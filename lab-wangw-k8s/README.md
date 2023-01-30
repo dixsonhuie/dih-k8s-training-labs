@@ -9,7 +9,7 @@
 
 * Note: It is mandatory to create each EKS cluster with a different subnet. For example: west: 10.0.x.x   central: 10.11.x.x 
 
-* For EKS creation you can use this link: https://github.com/GigaSpaces-ProfessionalServices/OOTB-DIH-k8s-provisioning
+* Use this project to create 2 EKS cluster across 2 regions:  https://github.com/GigaSpaces-ProfessionalServices/dih-k8s-provision-EKS-across-2-regions
 
 
 ### Demo steps: (For BBW training the cluster have been created!)
