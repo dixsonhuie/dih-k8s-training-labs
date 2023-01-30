@@ -12,7 +12,7 @@
 * For EKS creation you can use this link: https://github.com/GigaSpaces-ProfessionalServices/OOTB-DIH-k8s-provisioning
 
 
-### Demo steps:
+### Demo steps: (For BBW training the cluster have been created!)
 
 1. connect to Jumper
    ```
@@ -31,7 +31,7 @@
    ```
    kubectl edit deployments ingress-nginx-controller
    ```
-   Go to the 'containers:' section and under 'args:' add this line: (Don't use TAB for indentation bu spaces only.)
+   Go to the 'containers:' section and under 'args:' add this line: (Don't use TAB for indentation but spaces only.)
    ```
    - --tcp-services-configmap=$(POD_NAMESPACE)/tcp-services
    ```
