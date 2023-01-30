@@ -104,8 +104,8 @@
    ```
    Repeat steps 3-6. 
 
-8. Review and understand the the wangw configuration in the west-space code
-   the space code
+8. Review and understand the wangw configuration in the west-space code
+   
    ```
    cd ~/deployments
    ```
@@ -116,8 +116,8 @@
    vim west_space/src/main/resources/pu.properties
    ```
 
-   Review and understand the the wangw configuration in the central-space code
-   the space code
+   Review and understand the wangw configuration in the central-space code
+   
    ``` 
    vim central_space/src/main/resources/META-INF/spring/pu.xml
    ```
