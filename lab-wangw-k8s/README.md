@@ -258,6 +258,9 @@
      Validate the west-space is being loaded with new entries.
      Validate the central-space is receiving data from west-space.
 
+ 15. The REDOLOG  - test it
+     Explain and demonstrate how redlog works, for example: undeploy the Sink(central-wangw) and see how redlog in west-space growth up.
+
 ### Uninstall all the components:
 
    1. Uninstall west:
