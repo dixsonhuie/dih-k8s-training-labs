@@ -3,11 +3,15 @@ package com.gs;
 import com.gigaspaces.document.SpaceDocument;
 import com.gigaspaces.jdbc.GSConnection;
 import com.gigaspaces.metadata.SpaceTypeDescriptor;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.tomcat.util.http.parser.MediaType;
 import org.openspaces.core.GigaSpace;
 import org.openspaces.core.GigaSpaceConfigurer;
 import org.openspaces.core.space.SpaceProxyConfigurer;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.sql.*;
@@ -38,18 +42,20 @@ public class DataController {
     private GigaSpace space;
 
     private Connection connection;
+    @ApiOperation(value = "Welcome")
     @GetMapping("/")
-    public String welcome(){
-        return ("WELCOME to space rest api example! working with space:" ) + spaceName;
+    public ResponseEntity<String> welcome(){
+        return new ResponseEntity<>("WELCOME to space rest api example! working with space:"  + spaceName, HttpStatus.OK);
     }
 
+    @ApiOperation(value="Query table",notes="Returns first rows of the table")
     @GetMapping("/queryrs")
-    public String query(@RequestParam String tableName) throws Exception {
+    public ResponseEntity<String> query(@RequestParam String tableName) throws Exception {
         System.out.println("============ Query was called:" + spaceName);
         space = connectToSpace();
-        if (!tableExists(tableName)) return ("Failed to run select Table "+ tableName + " Doesn't exists in space " + spaceName);
+        if (!tableExists(tableName)) return new ResponseEntity<>("Failed to run select Table "+ tableName + " Doesn't exists in space " + spaceName, HttpStatus.BAD_REQUEST);
         ResultSet rs = executeQuery("select * from " + "\"" + tableName +"\" LIMIT "+limit ) ;
-        return dumpResult(rs);
+        return new ResponseEntity<>(dumpResult(rs), HttpStatus.OK);
     }
 
     public boolean tableExists(String tableName){
@@ -57,31 +63,34 @@ public class DataController {
         if (typeDescriptor == null)   return false; else return true;
     }
 
+    @ApiOperation(value="Insert new entry to table",notes="Will override entry if same id already exists")
     @PostMapping("/insert")
-    public String newEntry(@RequestParam String tableName, @RequestBody Map<String,Object> properties) throws Exception {
+    public ResponseEntity<String> newEntry(@RequestParam String tableName, @RequestBody Map<String,Object> properties) throws Exception {
         space = connectToSpace();
         if (!tableExists(tableName))
-            return ("Failed to insert object Type:" + tableName + "doesn't exists in space:" + spaceName);
+            return new ResponseEntity<>("Failed to insert object Type:" + tableName + "doesn't exists in space:" + spaceName, HttpStatus.BAD_REQUEST);
         SpaceDocument spaceDocument = new SpaceDocument(tableName);
         spaceDocument.addProperties(properties);
         try {
             space.write(spaceDocument);
         }
         catch (Throwable t){
-            return "Failed to insert object: " + t;
+            new ResponseEntity<>( "Failed to insert object: " + t, HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ("Object inserted successfully");
+        return new ResponseEntity<>("Object inserted successfully", HttpStatus.OK);
     }
 
+
+    @ApiOperation(value="Create a new table in space using create table query",notes="Will Fail if table already exists")
     @PostMapping("/newtable")
-    public String createTable(@RequestBody String query) throws Exception {
+    public ResponseEntity<String> createTable(@RequestBody String query) throws Exception {
         connectToSpace();
         String tableName = findTableName(query);
         if (tableExists(tableName)) {
-            return ("Fail to create table:" + tableName + " table already exists in space " + spaceName);
+            return new ResponseEntity<>("Fail to create table:" + tableName + " table already exists in space " + spaceName, HttpStatus.BAD_REQUEST);
         }
         updateQuery(query);
-        return ("Table was created successfully");
+        return  new ResponseEntity<>("Table was created successfully", HttpStatus.OK);
     }
 
     protected String findTableName(String query) throws Exception{
@@ -109,7 +118,6 @@ public class DataController {
             System.out.println("Fail to run query:" + query);
             throw e;
         }
-
     }
 
 
