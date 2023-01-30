@@ -63,7 +63,7 @@
    ```
    kubectl edit svc ingress-nginx-controller
    ```
-   Go to 'Ports:' section and ADD the following lines: (Don't use TAB for indentation bu spaces only.)
+   Go to 'Ports:' section and ADD the following lines: (Don't use TAB for indentation but spaces only.)
    ```
    - name: lus
      nodePort: 30420
