@@ -331,7 +331,7 @@
       ```
       ~/west-eks.sh
       cd ~
-      ./uninstall-dih-umbrella.sh
+      ./west-uninstall-dih-umbrella.sh
       ```
       Wait a few minutes.
       Validate by:
@@ -343,7 +343,7 @@
       ```
       ~/central-eks.sh
       cd ~
-      ./uninstall-dih-umbrella.sh
+      ./central-uninstall-dih-umbrella.sh
       ```
       Wait a few minutes.
       Validate by:
