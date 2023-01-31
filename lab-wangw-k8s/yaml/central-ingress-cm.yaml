@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tcp-services
+  namespace: default
+data:
+  4174: "default/xap-xap-manager-hs:4174"
+  8200: "default/sink-service:8200"
+  8090: "default/xap-xap-manager-service:8090"

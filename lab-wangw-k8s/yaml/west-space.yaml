@@ -1,0 +1,15 @@
+image:
+   repository: "shmulikkaufman/wangw"
+   tag: "16.2.1-WGMapper"
+metric:
+   enabled: true
+antiAffinity:
+   enabled: false
+ha: false
+java:
+   options: "-Dcom.sun.jini.reggie.initialUnicastDiscoveryPort=4174 -Dcom.gs.transport_protocol.lrmi.bind-port=8200"
+manager:
+   name: xap
+partitions: 1
+resourceUrl: "https://csm-training.s3.eu-west-1.amazonaws.com/GSTM378-WANGW/west-space-1.0-SNAPSHOT.jar"
+license: "Product=InsightEdge;Version=16.2;Type=ENTERPRISE;Customer=Gigaspaces_K8sAWSEnvTraining_DEV;Expiration=2025-Jan-01;Hash=PPSPYPQcOrQZvNSfORgd"

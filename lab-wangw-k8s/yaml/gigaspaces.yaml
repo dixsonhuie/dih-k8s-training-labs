@@ -1,0 +1,24 @@
+metric:
+   enabled: false
+manager:
+   service:
+      type: LoadBalancer
+      api:
+         enabled: true
+         port: 8090
+         nodePort:
+      lus:
+         enabled: true
+         port: 4174
+         nodePort:
+      lrmi:
+         enabled: true
+         port: 8200
+         nodePort:
+   antiAffinity:
+      enabled: false
+   ha: false
+   java:
+      heap: limit-300Mi
+   license: "Product=InsightEdge;Version=16.2;Type=ENTERPRISE;Customer=Gigaspaces_K8sAWSEnvTraining_DEV;Expiration=2025-Jan-01;Hash=PPSPYPQcOrQZvNSfORgd"
+license: "Product=InsightEdge;Version=16.2;Type=ENTERPRISE;Customer=Gigaspaces_K8sAWSEnvTraining_DEV;Expiration=2025-Jan-01;Hash=PPSPYPQcOrQZvNSfORgd"

@@ -1,0 +1,14 @@
+image:
+   repository: "shmulikkaufman/wangw"
+   tag: "16.2.1-newMapper"
+manager:
+   name: xap
+instances: 1
+resourceUrl: "https://csm-training.s3.eu-west-1.amazonaws.com/GSTM378-WANGW/data-feeder-west-space.jar"
+livenessProbe:
+   enabled: false
+readinessProbe:
+   enabled: false
+metrics:
+   enabled: false
+license: "Product=InsightEdge;Version=16.2;Type=ENTERPRISE;Customer=Gigaspaces_K8sAWSEnvTraining_DEV;Expiration=2025-Jan-01;Hash=PPSPYPQcOrQZvNSfORgd"

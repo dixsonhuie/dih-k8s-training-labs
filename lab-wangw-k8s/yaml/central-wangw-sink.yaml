@@ -1,0 +1,16 @@
+image:
+   repository: "shmulikkaufman/wangw"
+   tag: "16.2.1-WGMapper"
+java:
+   options: "-Dcom.gigaspaces.lrmi.level=INFO -Dcom.sun.jini.reggie.initialUnicastDiscoveryPort=4174 -Dcom.gs.transport_protocol.lrmi.bind-port=8200 -Dcom.gs.transport_protocol.lrmi.network-mapper=com.gs.WanGWMapper -Dcom.gs.lus_lb=af84326c7f6e742d491d722494dffa49-1526299617.eu-central-1.elb.amazonaws.com -Dcom.gs.wangw_lb=a4da567b7ff2d4698b4c83f70332d019-2133832821.eu-west-1.elb.amazonaws.com -Dcom.gs.remote_subnet_prefix=10.0."
+manager:
+   name: xap
+instances: 1
+resourceUrl: "https://csm-training.s3.eu-west-1.amazonaws.com/GSTM378-WANGW/central-sink-1.0-SNAPSHOT.jar"
+livenessProbe:
+   enabled: false
+readinessProbe:
+   enabled: false
+metrics:
+   enabled: false
+license: "Product=InsightEdge;Version=16.2;Type=ENTERPRISE;Customer=Gigaspaces_K8sAWSEnvTraining_DEV;Expiration=2025-Jan-01;Hash=PPSPYPQcOrQZvNSfORgd"
