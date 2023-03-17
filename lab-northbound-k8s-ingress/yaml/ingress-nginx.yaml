@@ -1,0 +1,23 @@
+# configure the tcp configmap
+tcp:
+  3000: "default/xap-grafana:3000"
+  8086: "default/xap-influxdb:8086"
+
+
+# enable the service and expose the tcp ports.
+# be careful as this will potentially make them
+# available on the public web
+controller:
+  service:
+    enabled: true
+    ports:
+      http: 80
+      https: 443
+      grafana: 3000
+      influxdb: 8086
+    targetPorts:
+      http: http
+      https: https
+      grafana: grafana
+      influxdb: influxdb
+      
