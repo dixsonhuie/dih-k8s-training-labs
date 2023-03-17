@@ -302,7 +302,8 @@ ingress-nginx-controller   LoadBalancer   10.108.33.207   10.108.33.207   80:308
 ```
 kubectl delete ingress example-ingress
 kubectl delete service pu-service
-helm delete rest demo my-nginx
+helm delete rest feeder demo
+helm delete my-nginx # or helm delete ingress-inginx
 
 cd ~/OOTB-DIH-provisioning/scripts; ./uninstall-dih-umbrella.sh
 ```
