@@ -13,6 +13,7 @@ This lab contains the following steps which may be broken down into additional s
  * Apply ingress yaml
  * Verify
 
+If time permitting, expose TCP services via the ingress controller.
 
 ## 1 Lab setup
 
@@ -217,7 +218,85 @@ http://<host name provisioned by eks>/rest/rest/restful-example <- Shows the cou
 
 ![browser screenshot](Pictures/restexample.png)
 
-## 10 Teardown
+## Expose TCP services via Ingress Controller
+You may have noticed in the previous exercise steps, when provisioning the ingress controller, you actually get a service of **Type LoadBalancer**. Certain ingress controllers allow you make use of that to expose existing TCP services through the loadbalancer service of the ingress controller.
+
+Services managed by the ingress resource only support web (http/https) traffic. This technique is one way to use the existing LoadBalancer service of the ingress controller without having to provision an additional LoadBalancer service.
+
+If time permits, you can continue to the next steps. Otherwise, please skip to the section Teardown.
+
+## 1 Remove previous ingress controller
+```
+helm delete my-nginx
+```
+
+## 2 Install kubernetes ingress controller
+```
+helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+```
+
+## 3 Prepare the ingress controller yaml
+In this lab, in the yaml folder, there is a file `ingress-nginx.yaml`. You can see the contents of this file below.
+```
+# configure the tcp configmap
+tcp:
+  3000: "default/xap-grafana:3000"
+  8086: "default/xap-influxdb:8086"
+
+
+# enable the service and expose the tcp ports.
+# be careful as this will potentially make them
+# available on the public web
+controller:
+  service:
+    enabled: true
+    ports:
+      http: 80
+      https: 443
+      grafana: 3000
+      influxdb: 8086
+    targetPorts:
+      http: http
+      https: https
+      grafana: grafana
+      influxdb: influxdb
+
+```
+
+The tcp section in the above yaml will tell the ingress controller deployment to create the configMap named ingress-nginx-tcp, in the same namespace that the ingress controller is installed in.
+
+The controller section will refer to the port. From the configMap we can see which service should be associated with that port.
+
+Run the following to install the ingress controller:
+```
+helm install ingress-nginx ingress-nginx/ingress-nginx -f ingress-nginx.yaml
+```
+## 4 Verify exposing TCP services
+1. View the configMap
+```
+kubectl get configmap ingress-nginx-tcp -o yaml
+apiVersion: v1
+data:
+"3000": default/grafana:3000
+"8086": default/influxdb:8086
+kind: ConfigMap
+metadata:
+annotations:
+meta.helm.sh/release-name: ingress-nginx
+meta.helm.sh/release-namespace: default
+# additional information truncated...
+```
+2. Check the ingress controller service
+```
+kubectl get service ingress-nginx-controller
+NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)                                                 
+ingress-nginx-controller   LoadBalancer   10.108.33.207   10.108.33.207   80:30834/TCP,443:32733/TCP,3000:31902/TCP,8086:30842/TCP
+```
+
+3. In a web browser, go to `http://<EXTERNAL-IP>:3000`, you should see the Grafana sign in page.
+![grafana screenshot](Pictures/grafana.png)
+
+## Teardown
 ```
 kubectl delete ingress example-ingress
 kubectl delete service pu-service
