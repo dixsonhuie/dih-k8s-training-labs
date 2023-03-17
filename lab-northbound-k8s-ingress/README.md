@@ -223,6 +223,8 @@ You may have noticed in the previous exercise steps, when provisioning the ingre
 
 Services managed by the ingress resource only support web (http/https) traffic. This technique is one way to use the existing LoadBalancer service of the ingress controller without having to provision an additional LoadBalancer service.
 
+See: [Exposing TCP and UDP Services](https://kubernetes.github.io/ingress-nginx/user-guide/exposing-tcp-udp-services/)  from the kubernetes github documentation.
+
 If time permits, you can continue to the next steps. Otherwise, please skip to the section Teardown.
 
 ## 1 Remove previous ingress controller
